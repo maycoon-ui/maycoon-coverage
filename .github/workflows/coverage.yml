@@ -34,7 +34,7 @@ jobs:
 
       - name: Generate fixed coverage file
         run: |
-          python3 generate_coverage_json.py
+          python3 gen-fixed-json.py
 
       - name: Commit & push reports
         run: |
