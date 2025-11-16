@@ -1,0 +1,3 @@
+[submodule "maycoon"]
+	path = maycoon
+	url = https://github.com/maycoon-ui/maycoon
