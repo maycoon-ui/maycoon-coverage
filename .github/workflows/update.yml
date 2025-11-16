@@ -1,0 +1,35 @@
+name: Update Maycoon Submodule
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  update-submodule:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Update Maycoon submodule
+        run: |
+          cd maycoon
+          git fetch origin master
+          git checkout master
+          cd ..
+          git add maycoon
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          # Commit and push only if submodule changed
+          if ! git diff --cached --quiet; then
+            git commit -m "Update maycoon submodule to latest"
+            git push
+          else
+            echo "Submodule already up-to-date"
+          fi

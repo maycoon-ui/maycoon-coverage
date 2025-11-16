@@ -1,10 +1,43 @@
-name: Coverage
+name: Coverage Report
+
+permissions:
+  pull-requests: write
+  contents: write
+
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
+  coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout coverage repo
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install tarpaulin
+        run: cargo install cargo-tarpaulin --force
+
+      - name: Run Tarpaulin
+        working-directory: ./maycoon
+        run: cargo tarpaulin
+
+      - name: Commit & push reports
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add tarpaulin-report.json
+          git add tarpaulin-report.html
+          git add cobertura.xml
+          git commit -m "Update coverage reports" || echo "No changes to commit"
+          git push
